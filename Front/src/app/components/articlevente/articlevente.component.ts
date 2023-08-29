@@ -91,7 +91,6 @@ export class ArticleventeComponent {
     const artConf = this.formmComponent.articlesConfection;
     artConf.clear();
     const Art = article.articlesConfection;
-
     Art.forEach((art:Article) => {
       // console.log(art.libelle);
       // console.log(art.pivot?.qte);

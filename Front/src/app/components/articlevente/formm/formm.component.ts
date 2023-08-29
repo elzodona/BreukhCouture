@@ -1,5 +1,5 @@
 import { Component, Output, EventEmitter, Input } from '@angular/core';
-import { FormBuilder, FormArray, FormControl, FormGroup, Validators, AbstractControl } from '@angular/forms';
+import { FormBuilder, FormArray, FormGroup, Validators } from '@angular/forms';
 import { ImagesService } from 'src/app/services/image-service/images.service';
 import { SharedBoolService } from 'src/app/services/other-fonctionnality-service/shared-bool.service';
 import { IdServiceService } from 'src/app/services/other-fonctionnality-service/id-service.service';
@@ -59,10 +59,10 @@ export class FormmComponent {
       promo: [true],
       valeur: [''],
       articlesConfection: this.fb.array([
-        // this.fb.group({
-        //   lib: ['', [Validators.required, Validators.pattern(/^[a-zA-Z][a-zA-Z0-9]*$/)]],
-        //   qte: ['', [Validators.required, Validators.pattern(/^[0-9]*$/)]]
-        // })
+        this.fb.group({
+          lib: ['', [Validators.required, Validators.pattern(/^[a-zA-Z][a-zA-Z0-9]*$/)]],
+          qte: ['', [Validators.required, Validators.pattern(/^[0-9]*$/)]]
+        })
       ]),
       photo: [this.img],
       marge: ['', [Validators.required, Validators.pattern(/^[0-9]*$/), Validators.min(5000)]],
@@ -106,7 +106,6 @@ export class FormmComponent {
       this.recupArtConf = articlesConfection.map((article: Breukh) => {
         const libelle = article.lib;
         const qte = article.qte;
-        const libs = libelle?.substring(0, 3).toLowerCase();
         return {
           libs: libelle,
           qte: qte
@@ -162,7 +161,9 @@ export class FormmComponent {
   }
 
   removeArticleConfection(index: number) {
-    this.articlesConfection.removeAt(index);
+    if (index != 0) {
+      this.articlesConfection.removeAt(index);
+    }
   }
 
   // ...
@@ -229,7 +230,8 @@ export class FormmComponent {
   }
 
   ajouter() {
-
+    console.log(this.recupArtConf);
+    
     const article: ArticleVente = {
       id: null,
       libelle: this.artVenteForm.value.libelle,
@@ -243,7 +245,7 @@ export class FormmComponent {
     };
     // console.log(article);
     this.addArtVenteEvent.emit(article);
-    //this.artVenteForm.reset();
+    this.artVenteForm.reset();
   }
       
   editArticle() {
@@ -258,12 +260,12 @@ export class FormmComponent {
       photo: this.name,
       photo_name: this.img
     };
-    this.editArticleEvent.emit(article);
     // console.log(article);
-    //this.artVenteForm.reset();
+    this.editArticleEvent.emit(article);
+    this.artVenteForm.reset();
     this.isEditing = false;
   }    
 
 
-
 }
+

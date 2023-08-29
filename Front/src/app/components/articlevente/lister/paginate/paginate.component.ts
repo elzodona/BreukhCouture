@@ -13,12 +13,12 @@ export class PaginateComponent {
   @Output() url = new EventEmitter();
   isEditing: boolean = false;
 
-  constructor(private sharedService: SharedBoolService)
-  {
-    this.sharedService.editModeChanged.subscribe((isEditing: boolean) => {
-      this.isEditing = isEditing;
-    });
-  }
+  // constructor(private sharedService: SharedBoolService)
+  // {
+  //   this.sharedService.editModeChanged.subscribe((isEditing: boolean) => {
+  //     this.isEditing = isEditing;
+  //   });
+  // }
   
 
   goToPage(url: string){

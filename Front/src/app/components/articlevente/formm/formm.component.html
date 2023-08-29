@@ -1,13 +1,14 @@
 
-<div class="container"
-    style="width: 70em; border: 2px solid; display: flex; justify-content: center; align-items: center;">
+<div class="container" class="shadow-lg p-3 mb-5 bg-white rounded"
+    style="width: 70em; display: flex; justify-content: center; align-items: center;">
     <form [formGroup]="artVenteForm" (ngSubmit)="addOrEdit()">
+        <h2>Ajouter un article de vente</h2>
         <div class="row">
             <div class="col" style="margin-left: 2em; margin-top: 2em;">
                 <div class="row">
                     <div class="col">
                         <label for="libelle" class="form-label">Libellé</label>
-                        <input style="width: 12em;" type="text" class="form-control" id="libelle" formControlName="libelle"
+                        <input style="width: 12em; border: 2px solid;" type="text" class="form-control" id="libelle" formControlName="libelle"
                             [class.is-valid]="artVenteForm.get('libelle')?.valid && (artVenteForm.get('libelle')?.touched || artVenteForm.get('libelle')?.dirty)"
                             [class.is-invalid]="artVenteForm.get('libelle')?.invalid && (artVenteForm.get('libelle')?.touched || artVenteForm.get('libelle')?.dirty)"
                             required />
@@ -21,7 +22,7 @@
                     </div>
                     <div class="col">
                         <label for="categorie" class="form-label">Catégorie</label>
-                        <select style="width: 12em;" class="form-select" formControlName="categorie">
+                        <select style="width: 12em; height: 2.2em; border: 2px solid;" class="form-select" formControlName="categorie">
                             <option value="">Sélectionner une catégorie</option>
                             <option *ngFor="let categorie of categories" [ngValue]="categorie.libelle">{{categorie.libelle}}</option>
                         </select>
@@ -34,7 +35,7 @@
                     </div>
                     <div *ngIf="artVenteForm.get('promo')?.value" class="col" style="margin-top: 1em; margin-left: -2em;">
                         <label for="valeur" class="form-label">Valeur</label>
-                        <input style="width: 17em;" type="text" class="form-control" id="valeur" formControlName="valeur"
+                        <input style="width: 12em; border: 2px solid;" type="text" class="form-control" id="valeur" formControlName="valeur"
                             pattern="[0-9]*" [class.is-valid]="artVenteForm.get('valeur')?.valid && artVenteForm.get('valeur')?.dirty"
                             [class.is-invalid]="artVenteForm.get('valeur')?.invalid && artVenteForm.get('valeur')?.dirty">
                         <div class="text-danger" *ngIf="artVenteForm.get('valeur')?.dirty && !artVenteForm.get('valeur')?.valid">
@@ -47,7 +48,7 @@
                         <h4> Articles de Confection </h4>
                         <span (click)="addArticleConfection()" style="margin-left: 10em; margin-bottom: 0.5em; font-size: 1em; margin-left: 3em; cursor: pointer;" class="btn btn-primary">+</span>
                     </div>
-                    <table class="table table-bordered" style="width: 10em;">
+                    <table class="table table-bordered table-secondary border-dark" style="width: 10em;">
                         <thead>
                             <tr class="border">
                                 <th class="border">Libelle</th>
@@ -55,10 +56,10 @@
                                 <th class="border">Action</th>
                             </tr>
                         </thead>
-                        <tbody formArrayName="articlesConfection">
+                        <tbody class="shadow-lg p-3 mb-5 bg-white rounded" formArrayName="articlesConfection">
                             <tr class="border" *ngFor="let item of articlesConfection.controls; let i = index" [formGroupName]="i">                               
                                 <td>
-                                    <input (input)="onLibInput($event, i)" style="width: 12em;" type="text" class="form-control" formControlName="lib"
+                                    <input (input)="onLibInput($event, i)" style="width: 12em; border: 2px solid;" type="text" class="form-control" formControlName="lib"
                                         [class.is-valid]="getLibField(i)?.valid && (getLibField(i)?.touched || getLibField(i)?.dirty)"
                                         [class.is-invalid]="getLibField(i)?.invalid && (getLibField(i)?.touched || getLibField(i)?.dirty)" required pattern="[a-zA-Z][a-zA-Z0-9]*" />
                                     <div class="suggestions" *ngIf="suggestions[i] && suggestions[i].length > 0">
@@ -74,7 +75,7 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <input style="width: 12em;" type="text" class="form-control" formControlName="qte" required
+                                    <input style="width: 12em; border: 2px solid;" type="text" class="form-control" formControlName="qte" required
                                         [class.is-valid]="getQteField(i)?.valid && (getQteField(i)?.touched || getQteField(i)?.dirty)"
                                         [class.is-invalid]="getQteField(i)?.invalid && (getQteField(i)?.touched || getQteField(i)?.dirty)"required pattern="[0-9]*"/>
                                     <div class="invalid-feedback" *ngIf="getQteField(i)?.hasError('required')">
@@ -93,7 +94,7 @@
                 </div>
             </div>
 
-            <div class="col" style="margin-left: 4em; margin-top: 2em;">
+            <div class="col" style="margin-left: 10em; margin-top: 2em;">
                 <div class="col">
                     <label for="photo" style="cursor: pointer;">
                         <img [src]="img" style="max-width: 100%; height: 10rem; border: 2px solid #ccc; padding: 15px; margin-bottom: 3.5rem;" />
@@ -102,24 +103,24 @@
                         style="display: none;" required>
                 </div>
                 <div class="col">
-                    <label for="ref">REF</label>
-                    <input [value]="ref" style="width: 17em;" type="text" class="form-control" readonly />
+                    <label style="margin-left: 7em;" for="ref">REF</label>
+                    <input [value]="ref" style="width: 17em; margin-left: 0em;" type="text" class="form-control" readonly />
                 </div>
                 <div class="col">
-                    <button style="margin-right: 17em; margin-top: 3em;" type="submit"
-                        class="btn btn-primary float-end">{{ isEditing ? 'Update' : 'Ajouter' }}</button>
+                    <button style="margin-left: 4em; margin-top: 5em; font-size: large; width: 8em; height: 3em;" type="submit"
+                        class="btn btn-secondary save float-end">{{ isEditing ? 'Update' : 'Ajouter' }}</button>
                 </div>
             </div>
         </div>
 
         <div class="row">
             <div class="col">
-                <label style="margin-left: 1em;" for="coutFabrication" class="form-label">Coût de Fabrication</label>
-                <input style="width: 17em; margin-left: 2em; margin-bottom: 1em;" [value]="cout" readonly type="text" class="form-control" id="coutFabrication" />
+                <label style="margin-left: 3em;" for="coutFabrication" class="form-label">Coût de Fabrication</label>
+                <input style="width: 12em; margin-left: 2em; margin-bottom: 1em;" [value]="cout" readonly type="text" class="form-control" id="coutFabrication" />
             </div>
             <div style="margin-left: -30em;" class="col">
                 <label for="marge" class="form-label">Marge/Article</label>
-                <input style="width: 17em; margin-left: 3em;" type="number" class="form-control" id="marge" formControlName="marge"
+                <input style="width: 12em; border: 2px solid; margin-left: -2em;" type="number" class="form-control" id="marge" formControlName="marge"
                     [class.is-valid]="artVenteForm.get('marge')?.valid && (artVenteForm.get('marge')?.touched || artVenteForm.get('marge')?.dirty)"
                     [class.is-invalid]="artVenteForm.get('marge')?.invalid && (artVenteForm.get('marge')?.touched || artVenteForm.get('marge')?.dirty)"
                     required />
@@ -134,8 +135,8 @@
             </div>
         </div>
         <div class="row" style="margin-bottom: 1em;">
-            <label style="margin-top: 0em; margin-left: 8em;" for="prixVente" class="form-label">Prix de Vente</label>
-            <input [value]="pv" style="margin-bottom: 1em; width: 17em; margin-top: 2em; margin-left: -8em;" readonly type="text" class="form-control" id="prixVente" />
+            <label style="margin-top: 0em; margin-left: 5em;" for="prixVente" class="form-label">Prix de Vente</label>
+            <input [value]="pv" style="margin-bottom: 1em; width: 12em; margin-top: 2em; margin-left: -8em;" readonly type="text" class="form-control" id="prixVente" />
         </div>
 
     </form>

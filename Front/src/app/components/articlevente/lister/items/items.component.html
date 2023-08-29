@@ -5,8 +5,13 @@
     <span *ngFor="let article of art.article">{{ article.libelle }}-{{ article.pivot?.qte }} ; </span>
 </td>
 <td>
-    <button (click)="update(art)" style="background-color: rgb(164, 223, 144);">Edit</button>
-    <button (click)="deleteArt(art)" style="background-color: rgb(155, 198, 103);">
-        {{ (isConfirming && articleToDelete === art.id) ? 'OK(' + countdown + ')' : 'Delete' }}
+    <button (click)="update(art)" style="background-color: white; border: none;"><i class="fa-solid text-warning fa-pen-to-square"></i></button>
+    <button (click)="deleteArt(art)" style="background-color: transparent; color: red; border: none; margin-left: 1em;">
+        <ng-container *ngIf="isConfirming && articleToDelete === art.id">
+            OK({{ countdown }})
+        </ng-container>
+        <ng-container *ngIf="!isConfirming || articleToDelete !== art.id">
+            <i class="fa-solid text-danger fa-trash"></i>
+        </ng-container>
     </button>
 </td>

@@ -17,3 +17,6 @@
     background-color: green;
 }
 
+.save:hover {
+    background-color: blue;
+}
