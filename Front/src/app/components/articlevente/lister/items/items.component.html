@@ -1,0 +1,12 @@
+
+<td>{{art.libelle}}</td>
+<td>{{art.qteStock}}</td>
+<td>
+    <span *ngFor="let article of art.article">{{ article.libelle }}-{{ article.pivot?.qte }} ; </span>
+</td>
+<td>
+    <button (click)="update(art)" style="background-color: rgb(164, 223, 144);">Edit</button>
+    <button (click)="deleteArt(art)" style="background-color: rgb(155, 198, 103);">
+        {{ (isConfirming && articleToDelete === art.id) ? 'OK(' + countdown + ')' : 'Delete' }}
+    </button>
+</td>

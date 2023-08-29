@@ -1,0 +1,25 @@
+<div style="width: 70em" class="card mb-5">
+    <div class="card-header">
+        <h2 class="card-title">Articles de ventes</h2>
+    </div>
+    <div class="card-body">
+        <form>
+            <table class="table table-bordered">
+                <thead class="border">
+                    <tr class="border">
+                        <th>Libellé</th>
+                        <th>QteStock</th>
+                        <th>Article de Confection</th>
+                    </tr>
+                </thead>
+                <tbody class="border" id="selectionTableBody">
+                    <tr class="app-items" [art]="art"(del)="deleting($event)" (updated)="update($event)"
+                       *ngFor="let art of articles.reverse()">
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+</div>
+
+    <app-paginate [links]="links" (url)="url($event)"></app-paginate>
