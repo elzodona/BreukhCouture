@@ -4,11 +4,11 @@
     <form [formGroup]="artVenteForm" (ngSubmit)="addOrEdit()">
         <h2>Ajouter un article de vente</h2>
         <div class="row">
-            <div class="col" style="margin-left: 2em; margin-top: 2em;">
+            <div class="col" style="margin-left: 5em; margin-top: 2em;">
                 <div class="row">
                     <div class="col">
-                        <label for="libelle" class="form-label">Libellé</label>
-                        <input style="width: 12em; border: 2px solid;" type="text" class="form-control" id="libelle" formControlName="libelle"
+                        <label for="libelle" class="form-label">Libelle</label>
+                        <input placeholder="saisir un libelle" style="width: 12em; border: 2px solid;" type="text" class="form-control" id="libelle" formControlName="libelle"
                             [class.is-valid]="artVenteForm.get('libelle')?.valid && (artVenteForm.get('libelle')?.touched || artVenteForm.get('libelle')?.dirty)"
                             [class.is-invalid]="artVenteForm.get('libelle')?.invalid && (artVenteForm.get('libelle')?.touched || artVenteForm.get('libelle')?.dirty)"
                             required />
@@ -21,8 +21,8 @@
                         </div>
                     </div>
                     <div class="col">
-                        <label for="categorie" class="form-label">Catégorie</label>
-                        <select style="width: 12em; height: 2.2em; border: 2px solid;" class="form-select" formControlName="categorie">
+                        <label style="margin-left: 2em;" for="categorie" class="form-label">Catégorie</label>
+                        <select style="width: 12em; margin-left: 2em; height: 2.2em; border: 2px solid;" class="form-select" formControlName="categorie">
                             <option value="">Sélectionner une catégorie</option>
                             <option *ngFor="let categorie of categories" [ngValue]="categorie.libelle">{{categorie.libelle}}</option>
                         </select>
@@ -34,8 +34,8 @@
                         <label class="form-check-label" for="promoCheckbox">Promo</label>
                     </div>
                     <div *ngIf="artVenteForm.get('promo')?.value" class="col" style="margin-top: 1em; margin-left: -2em;">
-                        <label for="valeur" class="form-label">Valeur</label>
-                        <input style="width: 12em; border: 2px solid;" type="text" class="form-control" id="valeur" formControlName="valeur"
+                        <label style="margin-left: 3em;" for="valeur" class="form-label">Valeur</label>
+                        <input placeholder="entrer une valeur" style="width: 12em; border: 2px solid; margin-left: 3em;" type="text" class="form-control" id="valeur" formControlName="valeur"
                             pattern="[0-9]*" [class.is-valid]="artVenteForm.get('valeur')?.valid && artVenteForm.get('valeur')?.dirty"
                             [class.is-invalid]="artVenteForm.get('valeur')?.invalid && artVenteForm.get('valeur')?.dirty">
                         <div class="text-danger" *ngIf="artVenteForm.get('valeur')?.dirty && !artVenteForm.get('valeur')?.valid">
@@ -46,7 +46,7 @@
                 <div class="row" style="margin-top: 2em;">
                     <div class="d-flex">
                         <h4> Articles de Confection </h4>
-                        <span (click)="addArticleConfection()" style="margin-left: 10em; margin-bottom: 0.5em; font-size: 1em; margin-left: 3em; cursor: pointer;" class="btn btn-primary">+</span>
+                        <span (click)="addArticleConfection()" style="margin-left: 10em; margin-bottom: 0.5em; font-size: 1em; margin-left: 3em; cursor: pointer;" class="btn btn-primary btn-sm">+</span>
                     </div>
                     <table class="table table-bordered table-secondary border-dark" style="width: 10em;">
                         <thead>
@@ -59,7 +59,7 @@
                         <tbody class="shadow-lg p-3 mb-5 bg-white rounded" formArrayName="articlesConfection">
                             <tr class="border" *ngFor="let item of articlesConfection.controls; let i = index" [formGroupName]="i">                               
                                 <td>
-                                    <input (input)="onLibInput($event, i)" style="width: 12em; border: 2px solid;" type="text" class="form-control" formControlName="lib"
+                                    <input placeholder="saisir un libelle" (input)="onLibInput($event, i)" style="width: 12em; border: 2px solid;" type="text" class="form-control" formControlName="lib"
                                         [class.is-valid]="getLibField(i)?.valid && (getLibField(i)?.touched || getLibField(i)?.dirty)"
                                         [class.is-invalid]="getLibField(i)?.invalid && (getLibField(i)?.touched || getLibField(i)?.dirty)" required pattern="[a-zA-Z][a-zA-Z0-9]*" />
                                     <div class="suggestions" *ngIf="suggestions[i] && suggestions[i].length > 0">
@@ -75,7 +75,7 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <input style="width: 12em; border: 2px solid;" type="text" class="form-control" formControlName="qte" required
+                                    <input placeholder="entrer une quantité" style="width: 12em; border: 2px solid;" type="text" class="form-control" formControlName="qte" required
                                         [class.is-valid]="getQteField(i)?.valid && (getQteField(i)?.touched || getQteField(i)?.dirty)"
                                         [class.is-invalid]="getQteField(i)?.invalid && (getQteField(i)?.touched || getQteField(i)?.dirty)"required pattern="[0-9]*"/>
                                     <div class="invalid-feedback" *ngIf="getQteField(i)?.hasError('required')">
@@ -85,16 +85,15 @@
                                         La quantité ne doit contenir que des chiffres.
                                     </div>
                                 </td>
-                                <td>
-                                    <button (click)="removeArticleConfection(i)" class="btn btn-danger">X</button>
+                                <td style="display: flex; justify-content: center; align-items: center;">
+                                    <button (click)="removeArticleConfection(i)" class="btn btn-danger btn-sm">X</button>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
-
-            <div class="col" style="margin-left: 10em; margin-top: 2em;">
+            <div class="col" style="margin-left: 6em; margin-top: 2em;">
                 <div class="col">
                     <label for="photo" style="cursor: pointer;">
                         <img [src]="img" style="max-width: 100%; height: 10rem; border: 2px solid #ccc; padding: 15px; margin-bottom: 3.5rem;" />
@@ -119,8 +118,8 @@
                 <input style="width: 12em; margin-left: 2em; margin-bottom: 1em;" [value]="cout" readonly type="text" class="form-control" id="coutFabrication" />
             </div>
             <div style="margin-left: -30em;" class="col">
-                <label for="marge" class="form-label">Marge/Article</label>
-                <input style="width: 12em; border: 2px solid; margin-left: -2em;" type="number" class="form-control" id="marge" formControlName="marge"
+                <label style="margin-left: 2em;" for="marge" class="form-label">Marge/Article</label>
+                <input placeholder="entrer une valeur" style="width: 12em; border: 2px solid; margin-left: 1em;" type="number" class="form-control" id="marge" formControlName="marge"
                     [class.is-valid]="artVenteForm.get('marge')?.valid && (artVenteForm.get('marge')?.touched || artVenteForm.get('marge')?.dirty)"
                     [class.is-invalid]="artVenteForm.get('marge')?.invalid && (artVenteForm.get('marge')?.touched || artVenteForm.get('marge')?.dirty)"
                     required />

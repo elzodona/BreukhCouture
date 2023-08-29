@@ -1,20 +1,23 @@
 
-<div class="navbar navbar-expand-lg navbar-light bg-light" style="margin-left: 25em; width: 50%;">
+<div class="navbar navbar-expand-lg navbar-light bg-light" style="margin-left: 25.5em; width: 58%;">
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo01"
         aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
-        <a class="navbar-brand" routerLink="" routerLinkActive="active">Mon Application</a>
+        <a class="navbar-brand" routerLink="" style="font-size: 2em;">Accueil</a>
         <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
             <li class="nav-item">
-                <a class="nav-link" routerLink="/categories" routerLinkActive="active">Catégories</a>
+                <a class="nav-link" routerLink="/categories" routerLinkActive="active"
+                    style="font-size: 1.5em;">Categories</a>           
             </li>
             <li class="nav-item">
-                <a class="nav-link" routerLink="/articles" routerLinkActive="active">Articles</a>
+                <a class="nav-link" routerLink="/articles" routerLinkActive="active"
+                    style="font-size: 1.5em;">Confections</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" routerLink="/artVente" routerLinkActive="active">Articles de Vente</a>
+                <a class="nav-link" routerLink="/artVente" routerLinkActive="active"
+                    [ngClass]="{'current-page': isActive('/artVente')} " style="font-size: 1.5em;">Ventes</a>
             </li>
         </ul>
         <form class="form-inline my- my-lg-0">

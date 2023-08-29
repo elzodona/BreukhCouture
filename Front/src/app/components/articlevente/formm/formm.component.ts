@@ -176,8 +176,6 @@ export class FormmComponent {
     return this.articlesConfection.at(index).get('qte');
   }
 
-// ...
-
   onLibInput(event: Event, i: number) {
     if (event.target instanceof HTMLInputElement) {
       const newValue = event.target.value;
@@ -217,8 +215,8 @@ export class FormmComponent {
         }
       });
     }
-    console.log(this.name);
-    console.log(this.img);
+    // console.log(this.name);
+    // console.log(this.img);
   }
 
   addOrEdit() {
@@ -230,7 +228,7 @@ export class FormmComponent {
   }
 
   ajouter() {
-    console.log(this.recupArtConf);
+    // console.log(this.recupArtConf);
     
     const article: ArticleVente = {
       id: null,
@@ -245,7 +243,7 @@ export class FormmComponent {
     };
     // console.log(article);
     this.addArtVenteEvent.emit(article);
-    this.artVenteForm.reset();
+    //this.artVenteForm.reset();
   }
       
   editArticle() {

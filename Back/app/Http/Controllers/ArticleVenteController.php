@@ -77,22 +77,12 @@ class ArticleVenteController extends Controller
 
             $requiredConfections = ["tis", "bou", "fil"];
             $cateFourni = [];
-            foreach ($request['articlesConfection'] as $value) {
-                $catego = key($value);
-                $libelle = substr($value[$catego], 0, 3);
-                $cateFourni[] = $libelle;
-            }
-            
-            $missingConfections = array_diff($requiredConfections, $cateFourni);
-
-            if (!empty($missingConfections)) {
-               return response()->json(['message' => 'Il manque des categories de confection', 'data'=>$missingConfections]); 
-            }
-
             foreach ($request['articlesConfection'] as $confectionItem) {
                 $key = key($confectionItem);
                 $articleName = $confectionItem[$key];
+                $libelle = substr($confectionItem[$key], 0, 3);
                 $quantity = $confectionItem['qte'];
+                $cateFourni[] = $libelle;
                 
                 $articleConf = Article::where('libelle', $articleName)->first();
 
@@ -102,11 +92,19 @@ class ArticleVenteController extends Controller
                 $cout += $articleConf->prix * $quantity;
                 $articleConf->update(['stock' => $articleConf->stock - $quantity]);
             }
+            $missingConfections = array_diff($requiredConfections, $cateFourni);
+
+            if (!empty($missingConfections)) {
+               return response()->json(['message' => 'Il manque des categories de confection', 'data'=>$missingConfections]); 
+            }
+
             $article->cout = $cout;
             $article->marge = $request['marge'];
             $article->prix_vente = $cout + $request['marge'];
 
             $article->save();
+
+            $articlesVente = [];
 
             foreach ($request['articlesConfection'] as $confectionItem) {
                 $key = key($confectionItem);
@@ -115,17 +113,20 @@ class ArticleVenteController extends Controller
 
                 $articleConf = Article::where('libelle', $articleName)->first();
                 
-                $breukh = new Breukh();
-                $breukh->qte = $quantity;
-                $breukh->article_id = $articleConf->id;
-                $breukh->article_vente_id = $article->id;
-                $breukh->save();
-            }            
+                $articleVente =  [
+                    'qte' => $quantity,
+                    'article_id' => $articleConf->id,
+                    'article_vente_id' => $article->id,
+                ];
+                $articlesVente [] = $articleVente;
+            }
+            // return $articlesVente[2];
+
+            $article->article()->attach($articlesVente);
 
             return dataCollection::RestRules(
                 "article de vente ajouté avec succès", 
                 $article, 
-                true,
                 200
             );
         });
@@ -203,7 +204,6 @@ class ArticleVenteController extends Controller
             return dataCollection::RestRules(
                 "article de vente modifié avec succès", 
                 $article, 
-                true,
                 200
             );
    

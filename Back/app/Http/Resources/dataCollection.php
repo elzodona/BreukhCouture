@@ -14,11 +14,10 @@ class dataCollection extends ResourceCollection
      */
 
      
-    public static function RestRules(string $message , $data = [], bool $success = true, string $code) {
+    public static function RestRules(string $message , $data = [], string $code) {
         return response()->json([
             "message" => $message,
             "data" => $data,
-            "success" => $success,
             "status_code" => $code
         ]);
     }   
