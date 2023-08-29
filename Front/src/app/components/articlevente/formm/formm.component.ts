@@ -243,7 +243,7 @@ export class FormmComponent {
     };
     // console.log(article);
     this.addArtVenteEvent.emit(article);
-    //this.artVenteForm.reset();
+    this.artVenteForm.reset();
   }
       
   editArticle() {

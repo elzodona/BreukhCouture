@@ -30,7 +30,8 @@ class ArticleVente extends Model
     {
         static::created(function (ArticleVente $article) {
             $artConf = request()->articlesConfection;
-            
+            $articlesVente = [];
+
             foreach ($artConf as $confectionItem) {
                 $key = key($confectionItem);
                 $articleName = $confectionItem[$key];
@@ -46,6 +47,31 @@ class ArticleVente extends Model
                 $articlesVente [] = $articleVente;
             }
             $article->article()->attach($articlesVente);
+        });
+
+        static::updated(function (ArticleVente $article) {
+            $artConf = request()->articlesConfection;
+            $articlesVente = [];
+            
+            foreach ($artConf as $confectionItem) {
+                $key = key($confectionItem);
+                $articleName = $confectionItem[$key];
+                $quantity = $confectionItem['qte'];
+
+                $articleConf = Article::where('libelle', $articleName)->first();
+                
+                $articleVente =  [
+                    'qte' => $quantity,
+                    'article_id' => $articleConf->id,
+                    'article_vente_id' => $article->id,
+                ];
+                $articlesVente [] = $articleVente;
+            }
+            $article->article()->sync($articlesVente);
+        });
+
+        static::deleted(function (ArticleVente $article) {
+            $article->article()->detach();
         });
 
     }

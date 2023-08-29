@@ -40,9 +40,7 @@ class ArticleVenteController extends Controller
             $article = new ArticleVente();
             
             $cat = Categorie::where('libelle', $request['categorie_libelle'])->first();
-            if (!$cat) {
-                throw new \Exception('Catégorie introuvable');
-            }
+
             $article->categorie_id = $cat->id;
             $article->libelle = $request['libelle'];
             $article->promo = $request['promo'];
@@ -106,24 +104,6 @@ class ArticleVenteController extends Controller
 
             $articlesVente = [];
 
-            // foreach ($request['articlesConfection'] as $confectionItem) {
-            //     $key = key($confectionItem);
-            //     $articleName = $confectionItem[$key];
-            //     $quantity = $confectionItem['qte'];
-
-            //     $articleConf = Article::where('libelle', $articleName)->first();
-                
-            //     $articleVente =  [
-            //         'qte' => $quantity,
-            //         'article_id' => $articleConf->id,
-            //         'article_vente_id' => $article->id,
-            //     ];
-            //     $articlesVente [] = $articleVente;
-            // }
-            // // return $articlesVente[2];
-
-            // $article->article()->attach($articlesVente);
-
             return dataCollection::RestRules(
                 "article de vente ajouté avec succès", 
                 $article, 
@@ -140,35 +120,31 @@ class ArticleVenteController extends Controller
     {
         $article = ArticleVente::find($articleVenteId);
 
-        $article->update(['libelle' => $request->libelle]);
-        $article->update(['promo' => $request->promo]);
-        if ($request->input('promo') == 1) {
-            $article->update(['valeur' => $request->valeur]);
+        $article->libelle = $request->libelle;
+
+        $cat = Categorie::where('libelle', $request->categorie_libelle)->first();
+
+        $article->categorie_id = $cat->id;
+
+        $article->promo = $request->promo;
+        if ($request->promo == 1) {
+            $article->valeur = $request->valeur;
         }
 
         if (count($request->articlesConfection) < 3 ) {
             return response()->json(['message' => 'Articles de confection fournis insuffisants'], 400);
         }
 
-       $requiredConfections = ["tis", "bou", "fil"];
-        $cateFourni = [];
-        foreach ($request['articlesConfection'] as $value) {
-            $catego = key($value);
-            $libelle = substr($value[$catego], 0, 3);
-            $cateFourni[] = $libelle;
-        }
-        $missingConfections = array_diff($requiredConfections, $cateFourni);
-
-        if (!empty($missingConfections)) {
-            return response()->json(['message' => 'Il manque des categories de confection', 'data'=>$missingConfections]); 
-        }
-
         $cout = 0;
+        $requiredConfections = ["tis", "bou", "fil"];
+        $cateFourni = [];
 
         foreach ($request->articlesConfection as $confectionItem) {
             $key = key($confectionItem);
             $articleName = $confectionItem[$key];
+            $libelle = substr($confectionItem[$key], 0, 3);
             $quantity = $confectionItem['qte'];
+            $cateFourni[] = $libelle;
 
             $articleConf = Article::where('libelle', $articleName)->first();
 
@@ -179,33 +155,24 @@ class ArticleVenteController extends Controller
             $cout += $articleConf->prix * $quantity;
             $articleConf->decrement('stock', $quantity);
         }
+        
+        $missingConfections = array_diff($requiredConfections, $cateFourni);
+
+        if (!empty($missingConfections)) {
+            return response()->json(['message' => 'Il manque des categories de confection', 'data'=>$missingConfections]); 
+        }
 
         $article->cout = $cout;
-        $article->update(['marge' => $request->marge]);
-        $article->update(['prix_vente' => $cout + $request->marge]);
+        $article->marge = $request->marge;
+        $article->prix_vente = $cout + $request->marge;
 
         $article->save();
-        $article->article()->detach();
 
-        foreach ($request['articlesConfection'] as $confectionItem) {
-            $key = key($confectionItem);
-            $articleName = $confectionItem[$key];
-            $quantity = $confectionItem['qte'];
-
-            $articleConf = Article::where('libelle', $articleName)->first();
-            
-            $breukh = new Breukh();
-            $breukh->qte = $quantity;
-            $breukh->article_id = $articleConf->id;
-            $breukh->article_vente_id = $article->id;
-            $breukh->save();
-        }   
-
-            return dataCollection::RestRules(
-                "article de vente modifié avec succès", 
-                $article, 
-                200
-            );
+        return dataCollection::RestRules(
+            "article de vente modifié avec succès", 
+            $article, 
+            200
+        );
    
     }
 
@@ -217,7 +184,6 @@ class ArticleVenteController extends Controller
         return DB::transaction(function () use ($articleId) {
             
             $article = ArticleVente::findOrFail($articleId);
-            $article->article()->detach();
             $article->delete();
 
             return response()->json(
