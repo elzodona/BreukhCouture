@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\Article;
 
 
 class ArticleVente extends Model
@@ -23,6 +24,30 @@ class ArticleVente extends Model
     public function categorie()
     {
         return $this->belongsTo(Categorie::class);
+    }
+
+    protected static function booted():void
+    {
+        static::created(function (ArticleVente $article) {
+            $artConf = request()->articlesConfection;
+            
+            foreach ($artConf as $confectionItem) {
+                $key = key($confectionItem);
+                $articleName = $confectionItem[$key];
+                $quantity = $confectionItem['qte'];
+
+                $articleConf = Article::where('libelle', $articleName)->first();
+                
+                $articleVente =  [
+                    'qte' => $quantity,
+                    'article_id' => $articleConf->id,
+                    'article_vente_id' => $article->id,
+                ];
+                $articlesVente [] = $articleVente;
+            }
+            $article->article()->attach($articlesVente);
+        });
+
     }
 
 }

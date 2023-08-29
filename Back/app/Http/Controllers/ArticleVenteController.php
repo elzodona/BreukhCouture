@@ -106,23 +106,23 @@ class ArticleVenteController extends Controller
 
             $articlesVente = [];
 
-            foreach ($request['articlesConfection'] as $confectionItem) {
-                $key = key($confectionItem);
-                $articleName = $confectionItem[$key];
-                $quantity = $confectionItem['qte'];
+            // foreach ($request['articlesConfection'] as $confectionItem) {
+            //     $key = key($confectionItem);
+            //     $articleName = $confectionItem[$key];
+            //     $quantity = $confectionItem['qte'];
 
-                $articleConf = Article::where('libelle', $articleName)->first();
+            //     $articleConf = Article::where('libelle', $articleName)->first();
                 
-                $articleVente =  [
-                    'qte' => $quantity,
-                    'article_id' => $articleConf->id,
-                    'article_vente_id' => $article->id,
-                ];
-                $articlesVente [] = $articleVente;
-            }
-            // return $articlesVente[2];
+            //     $articleVente =  [
+            //         'qte' => $quantity,
+            //         'article_id' => $articleConf->id,
+            //         'article_vente_id' => $article->id,
+            //     ];
+            //     $articlesVente [] = $articleVente;
+            // }
+            // // return $articlesVente[2];
 
-            $article->article()->attach($articlesVente);
+            // $article->article()->attach($articlesVente);
 
             return dataCollection::RestRules(
                 "article de vente ajouté avec succès", 
