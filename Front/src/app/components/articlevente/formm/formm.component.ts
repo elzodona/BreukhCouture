@@ -1,5 +1,5 @@
 import { Component, Output, EventEmitter, Input } from '@angular/core';
-import { FormBuilder, FormArray, FormGroup, Validators, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { FormBuilder, FormArray, FormGroup, Validators, AbstractControl, ValidationErrors, ValidatorFn, FormControl } from '@angular/forms';
 import { ImagesService } from 'src/app/services/image-service/images.service';
 import { SharedBoolService } from 'src/app/services/other-fonctionnality-service/shared-bool.service';
 import { IdServiceService } from 'src/app/services/other-fonctionnality-service/id-service.service';
@@ -62,7 +62,12 @@ export class FormmComponent {
       categorie: [''],
       promo: [],
       valeur: ['', [this.onlyDigitsValidator, this.monChampValidation]],
-      articlesConfection: this.fb.array([], [this.validateArticlesConfection]),
+      articlesConfection: this.fb.array([
+        this.fb.group({
+          lib: ['', [Validators.required, Validators.pattern(/^[a-zA-Z][a-zA-Z0-9]*$/)]],
+          qte: [{ value: '', disabled: true }, [Validators.required, Validators.pattern(/^[0-9]*$/)]]
+        })
+      ], [this.validateArticlesConfection]),
       photo: [this.img],
       marge: ['', [Validators.required, this.margeValidator, this.onlyDigitsValidator]],
       prixVente: ['']
@@ -216,10 +221,8 @@ export class FormmComponent {
 
   addArticleConfection() {
     const articleGroup = this.fb.group({
-      id: [],
-      categorie: [],
       lib: ['', [Validators.required, Validators.pattern(/^[a-zA-Z][a-zA-Z0-9]*$/)]],
-      qte: ['', [Validators.required, Validators.pattern(/^[0-9]*$/)]]
+      qte: [{ value: '', disabled: true }, [Validators.required, Validators.pattern(/^[0-9]*$/)]]
     });
     this.articlesConfection.push(articleGroup);
   }
@@ -230,18 +233,25 @@ export class FormmComponent {
     // }
   }
 
-  getLibField(index: number) {
-    return this.articlesConfection.at(index).get('lib');
-  }
-
-  getQteField(index: number) {
-    return this.articlesConfection.at(index).get('qte');
-  }
-
   onLibInput(event: Event, i: number) {
     if (event.target instanceof HTMLInputElement) {
       const newValue = event.target.value;
       const searchTerm = newValue.trim().toLowerCase();
+
+      const libelleControl = this.getLibField(i);
+      const qteControl = this.getQteField(i);
+
+      if (libelleControl && qteControl) {
+        libelleControl.setValue(newValue);
+
+        if (libelleControl.valid) {
+          qteControl.enable();
+          // this.display = true; 
+        } else {
+          qteControl.disable();
+          // this.display = false; 
+        }
+      }
 
       if (searchTerm.length >= 3) {
         this.suggestions[i] = this.artConfect
@@ -253,6 +263,14 @@ export class FormmComponent {
     }
   }
 
+  getLibField(index: number): FormControl | null {
+    return this.articlesConfection.at(index)?.get('lib') as FormControl;
+  }
+
+  getQteField(index: number): FormControl | null {
+    return this.articlesConfection.at(index)?.get('qte') as FormControl;
+  }
+  
   insertSuggestion(i: number, suggestion: Article) {
     const libelleControl = this.articlesConfection.at(i).get('lib');
     if (libelleControl) {

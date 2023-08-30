@@ -26,7 +26,7 @@
                     <div class="col">
                         <label style="margin-left: 2em;" for="categorie" class="form-label">Catégorie</label>
                         <select style="width: 12em; margin-left: 2em; height: 2.2em; border: 2px solid;" class="form-select" formControlName="categorie">
-                            <option value="hey">Sélectionner une catégorie</option>
+                            <option value="">Sélectionner une catégorie</option>
                             <option *ngFor="let categorie of categories" [ngValue]="categorie.libelle">{{categorie.libelle}}</option>
                         </select>
                     </div>
@@ -66,31 +66,36 @@
                         <tbody class="shadow-lg p-3 mb-5 bg-white rounded" formArrayName="articlesConfection">
                             <tr class="border" *ngFor="let item of articlesConfection.controls; let i = index" [formGroupName]="i">                               
                                 <td>
-                                    <input placeholder="saisir un libelle" (input)="onLibInput($event, i)" style="width: 12em; border: 2px solid;" type="text" class="form-control" formControlName="lib"
+                                    <input placeholder="saisir un libelle" (input)="onLibInput($event, i)" style="width: 12em; border: 2px solid;"
+                                        type="text" class="form-control" formControlName="lib"
                                         [class.is-valid]="getLibField(i)?.valid && (getLibField(i)?.touched || getLibField(i)?.dirty)"
-                                        [class.is-invalid]="getLibField(i)?.invalid && (getLibField(i)?.touched || getLibField(i)?.dirty)" required pattern="[a-zA-Z][a-zA-Z0-9]*" />
-                                    <div class="suggestions" *ngIf="suggestions[i] && suggestions[i].length > 0">
-                                        <div *ngFor="let suggestion of suggestions[i]" (click)="insertSuggestion(i, suggestion)">
-                                            {{ suggestion.libelle }}
+                                        [class.is-invalid]="getLibField(i)?.invalid && (getLibField(i)?.touched || getLibField(i)?.dirty)" required
+                                        pattern="[a-zA-Z][a-zA-Z0-9]*" />
+
+                                        <div class="suggestions" *ngIf="suggestions[i] && suggestions[i].length > 0">
+                                            <div *ngFor="let suggestion of suggestions[i]" (click)="insertSuggestion(i, suggestion)">
+                                                {{ suggestion.libelle }}
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="invalid-feedback" *ngIf="getLibField(i)?.hasError('required')">
-                                        Le champ est requis.
-                                    </div>
-                                    <div class="invalid-feedback" *ngIf="getLibField(i)?.hasError('pattern')">
-                                        Le libellé ne doit commencer qu'avec une lettre et peut contenir des lettres et des chiffres.
-                                    </div>
+                                        <div class="invalid-feedback" *ngIf="getLibField(i)?.hasError('required')">
+                                            Le champ est requis.
+                                        </div>
+                                        <div class="invalid-feedback" *ngIf="getLibField(i)?.hasError('pattern')">
+                                            Le libellé ne doit commencer qu'avec une lettre et peut contenir des lettres et des chiffres.
+                                        </div>
                                 </td>
                                 <td>
-                                    <input placeholder="entrer une quantité" style="width: 12em; border: 2px solid;" type="text" class="form-control" formControlName="qte" required
+                                    <input placeholder="entrer une quantité" style="width: 12em; border: 2px solid;" type="text" class="form-control"
+                                        formControlName="qte" required
                                         [class.is-valid]="getQteField(i)?.valid && (getQteField(i)?.touched || getQteField(i)?.dirty)"
-                                        [class.is-invalid]="getQteField(i)?.invalid && (getQteField(i)?.touched || getQteField(i)?.dirty)"required pattern="[0-9]*"/>
-                                    <div class="invalid-feedback" *ngIf="getQteField(i)?.hasError('required')">
-                                        Le champ est requis.
-                                    </div>
-                                    <div class="invalid-feedback" *ngIf="getQteField(i)?.hasError('pattern')">
-                                        La quantité ne doit contenir que des chiffres.
-                                    </div>
+                                        [class.is-invalid]="getQteField(i)?.invalid && (getQteField(i)?.touched || getQteField(i)?.dirty)" required
+                                        pattern="[0-9]*"/>
+                                        <div class="invalid-feedback" *ngIf="getQteField(i)?.hasError('required')">
+                                            Le champ est requis.
+                                        </div>
+                                        <div class="invalid-feedback" *ngIf="getQteField(i)?.hasError('pattern')">
+                                            La quantité ne doit contenir que des chiffres.
+                                        </div>
                                 </td>
                                 <td style="display: flex; justify-content: center; align-items: center;">
                                     <button (click)="removeArticleConfection(i)" class="btn btn-danger btn-sm">X</button>
