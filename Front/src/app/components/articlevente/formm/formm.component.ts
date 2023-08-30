@@ -1,5 +1,5 @@
 import { Component, Output, EventEmitter, Input } from '@angular/core';
-import { FormBuilder, FormArray, FormGroup, Validators, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
+import { FormBuilder, FormArray, FormGroup, Validators, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { ImagesService } from 'src/app/services/image-service/images.service';
 import { SharedBoolService } from 'src/app/services/other-fonctionnality-service/shared-bool.service';
 import { IdServiceService } from 'src/app/services/other-fonctionnality-service/id-service.service';
@@ -23,6 +23,8 @@ export class FormmComponent {
   @Output() getPrix = new EventEmitter();
   @Output() addArtVenteEvent = new EventEmitter<ArticleVente>();
   @Output() editArticleEvent = new EventEmitter<ArticleVente>();
+  @Input() art: ArticleVente[] = [];
+
 
   id!: number | null;
   artVenteForm!: FormGroup;
@@ -38,6 +40,7 @@ export class FormmComponent {
   suggestions:  Article[][] = [];
   recupArtConf: any;
   isEditing: boolean = false;
+  libs: boolean = true;
 
   
   ngOnInit()
@@ -45,7 +48,7 @@ export class FormmComponent {
     this.idService.getId().subscribe(id => {
       this.id = id;
       // console.log(this.id);
-    });
+    });    
   }
 
   constructor(private fb: FormBuilder, private imageService: ImagesService, private sharedService: SharedBoolService, private idService: IdServiceService) {
@@ -57,11 +60,11 @@ export class FormmComponent {
     this.artVenteForm = this.fb.group({
       libelle: ['', [Validators.required, Validators.pattern(/^[a-zA-Z][a-zA-Z0-9]*$/)]],
       categorie: [''],
-      promo: [true],
-      valeur: ['', [Validators.pattern('[0-9]*'), this.monChampValidation]],      
+      promo: [],
+      valeur: ['', [this.onlyDigitsValidator, this.monChampValidation]],
       articlesConfection: this.fb.array([], [this.validateArticlesConfection]),
       photo: [this.img],
-      marge: ['', [Validators.required, Validators.pattern(/^[0-9]*$/), Validators.min(5000)]],
+      marge: ['', [Validators.required, this.margeValidator, this.onlyDigitsValidator]],
       prixVente: ['']
     });
     this.articlesConf = this.fb.array([]);
@@ -71,18 +74,11 @@ export class FormmComponent {
         this.prom = promo ? 1 : 0;        
     });
 
-    this.artVenteForm.get('libelle')!.valueChanges
-      .subscribe((libelle) => {
-        // const lettersOnly = /^[a-zA-Z]+$/;
-        if (libelle) {
-          this.ref = this.generateReference(libelle);
-        } else {
-          this.ref = "";
-        }
-      });
-
     this.artVenteForm.get('categorie')!.valueChanges.subscribe((categorie) => {
-      if (this.ref.length === 7) {
+      if (this.ref.length < 7) {
+        this.ref = "";
+      }
+      else if (this.ref.length === 7) {
         this.archive = categorie.toUpperCase() + '-' + this.getNumArt(categorie);
 
         this.updateRef(categorie, this.getNumArt(categorie));
@@ -136,6 +132,27 @@ export class FormmComponent {
 
   }
 
+  libelleChange(event: Event)
+  {
+    if (event.target instanceof HTMLInputElement) {
+      const libelle = event.target.value;  
+
+      if (libelle.length >= 4) {
+        const correspondance = this.art.some((article: ArticleVente) => article.libelle === libelle);
+
+          if (!correspondance) {
+            this.libs = true;
+            this.ref = this.generateReference(libelle);
+          }else{
+            this.libs = false;
+            this.ref = '';
+          }
+      }else{
+        this.ref = "";
+      }
+    }
+  }
+
   monChampValidation(control: AbstractControl): ValidationErrors | null {
     const valeur = control.value;
     if (valeur && valeur <= 5) {
@@ -161,6 +178,22 @@ export class FormmComponent {
       return { invalidArt: true };
     }
 
+    return null;
+  }
+
+  onlyDigitsValidator(control: AbstractControl) {
+    const value = control.value;
+    if (value && !/^\d+$/.test(value)) {
+      return { onlyDigits: true };
+    }
+    return null;
+  }
+
+  margeValidator(control: AbstractControl) {
+    const value = control.value;
+    if (value !== null && (isNaN(value) || value < 500)) {
+      return { min: true };
+    }
     return null;
   }
 

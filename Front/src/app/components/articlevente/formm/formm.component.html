@@ -11,7 +11,7 @@
                         <input placeholder="saisir un libelle" style="width: 12em; border: 2px solid;" type="text" class="form-control" id="libelle" formControlName="libelle"
                             [class.is-valid]="artVenteForm.get('libelle')?.valid && (artVenteForm.get('libelle')?.touched || artVenteForm.get('libelle')?.dirty)"
                             [class.is-invalid]="artVenteForm.get('libelle')?.invalid && (artVenteForm.get('libelle')?.touched || artVenteForm.get('libelle')?.dirty)"
-                            required />
+                            required (input)="libelleChange($event)" />
                         <div class="text-danger"
                             *ngIf="artVenteForm.get('libelle')?.hasError('required') && (artVenteForm.get('libelle')?.touched || artVenteForm.get('libelle')?.dirty)">
                             Le libellé est requis.
@@ -19,11 +19,14 @@
                         <div class="text-danger" *ngIf="artVenteForm.get('libelle')?.hasError('pattern')">
                             Le libellé doit commencer par une lettre.
                         </div>
+                        <div *ngIf="!libs">
+                            Ce libellé existe déjà.
+                        </div>
                     </div>
                     <div class="col">
                         <label style="margin-left: 2em;" for="categorie" class="form-label">Catégorie</label>
                         <select style="width: 12em; margin-left: 2em; height: 2.2em; border: 2px solid;" class="form-select" formControlName="categorie">
-                            <option value="">Sélectionner une catégorie</option>
+                            <option value="hey">Sélectionner une catégorie</option>
                             <option *ngFor="let categorie of categories" [ngValue]="categorie.libelle">{{categorie.libelle}}</option>
                         </select>
                     </div>
@@ -39,8 +42,11 @@
                             class="form-control" id="valeur" formControlName="valeur"
                             [class.is-valid]="artVenteForm.get('valeur')?.valid && artVenteForm.get('valeur')?.dirty"
                             [class.is-invalid]="artVenteForm.get('valeur')?.invalid && artVenteForm.get('valeur')?.dirty">
-                        <div class="invalid-feedback" *ngIf="artVenteForm.get('valeur')?.errors?.['monChampValidation'] aa">
-                            La valeur doit contenir uniquement des chiffres et est supérieure à 5.
+                        <div class="invalid-feedback" *ngIf="artVenteForm.get('valeur')?.errors?.['onlyDigits']">
+                            La valeur doit contenir uniquement des chiffres.
+                        </div>
+                        <div class="invalid-feedback" *ngIf="artVenteForm.get('valeur')?.errors?.['monChampValidation']">
+                            La valeur doit être supérieure à 5.
                         </div>
                     </div>
                 </div>
@@ -127,17 +133,22 @@
             </div>
             <div style="margin-left: -30em;" class="col">
                 <label style="margin-left: 2em;" for="marge" class="form-label">Marge/Article</label>
-                <input placeholder="entrer une valeur" style="width: 12em; border: 2px solid; margin-left: 1em;" type="number" class="form-control" id="marge" formControlName="marge"
+                <input placeholder="entrer une valeur" style="width: 12em; border: 2px solid; margin-left: 1em;" type="number"
+                    class="form-control" id="marge" formControlName="marge"
                     [class.is-valid]="artVenteForm.get('marge')?.valid && (artVenteForm.get('marge')?.touched || artVenteForm.get('marge')?.dirty)"
                     [class.is-invalid]="artVenteForm.get('marge')?.invalid && (artVenteForm.get('marge')?.touched || artVenteForm.get('marge')?.dirty)"
                     required />
                 <div class="text-danger"
-                    *ngIf="(artVenteForm.get('marge')?.hasError('required') || artVenteForm.get('marge')?.hasError('pattern')
-                  || artVenteForm.get('marge')?.hasError('min')) && (artVenteForm.get('marge')?.touched || artVenteForm.get('marge')?.dirty)">
-                    La marge est requise et doit être supérieure ou égale à 5000.
-                </div>
-                <div class="text-danger" *ngIf="artVenteForm.get('marge')?.hasError('pattern')">
-                    La marge ne doit contenir que des chiffres.
+                    *ngIf="artVenteForm.get('marge')?.invalid && (artVenteForm.get('marge')?.touched || artVenteForm.get('marge')?.dirty)">
+                    <ng-container *ngIf="artVenteForm.get('marge')?.errors?.['required']">
+                        La marge ne doit contenir que des chiffres.
+                    </ng-container>
+                    <ng-container *ngIf="artVenteForm.get('marge')?.errors?.['onlyDigits']">
+                        La marge ne doit contenir que des chiffres.
+                    </ng-container>
+                    <ng-container *ngIf="artVenteForm.get('marge')?.errors?.['min']">
+                        La marge doit être supérieure ou égale à 500.
+                    </ng-container>
                 </div>
             </div>
         </div>

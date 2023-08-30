@@ -21,6 +21,7 @@ import { SharedBoolService } from 'src/app/services/other-fonctionnality-service
 export class ArticleventeComponent {
 
   @Input() articles: ArticleVente[] = [];
+  @Input() art: ArticleVente[] = [];
   @Input() categories: Categorie[] = [];
   @Input() artConfect: Article[] = [];
   @Input() prix!: number;
@@ -41,7 +42,7 @@ export class ArticleventeComponent {
       this.articlevente.index(url).subscribe((res) => {
         this.articles = res.data.articles;
         this.links = res.data.link;
-        // console.log(this.articles);
+        
       });
     }else{
       this.sharedService.setEditMode(true);
@@ -53,7 +54,8 @@ export class ArticleventeComponent {
       res => {
         this.articles = res.data.articles;
         this.links = res.data.link;
-        // console.log(this.links);
+        this.art = res.data.art;
+        // console.log(this.art);
       }
     )
     this.articleService.getCatAndFour().subscribe(

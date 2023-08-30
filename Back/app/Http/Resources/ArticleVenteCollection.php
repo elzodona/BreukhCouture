@@ -20,6 +20,7 @@ class ArticleVenteCollection extends ResourceCollection
         return [
             "data" => [
                 "articles" => ArticleVenteResource::collection($articles),
+                "art" => ArticleVente::all()
             ],
         ];
     }

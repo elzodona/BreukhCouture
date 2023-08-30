@@ -17,7 +17,6 @@ export class ListerComponent {
 
   @Input() links : Link[] = [];
 
-
   @Input() art!: ArticleVente;
 
 url(url: string) {
