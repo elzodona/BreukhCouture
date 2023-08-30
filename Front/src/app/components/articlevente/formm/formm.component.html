@@ -35,11 +35,12 @@
                     </div>
                     <div *ngIf="artVenteForm.get('promo')?.value" class="col" style="margin-top: 1em; margin-left: -2em;">
                         <label style="margin-left: 3em;" for="valeur" class="form-label">Valeur</label>
-                        <input placeholder="entrer une valeur" style="width: 12em; border: 2px solid; margin-left: 3em;" type="text" class="form-control" id="valeur" formControlName="valeur"
-                            pattern="[0-9]*" [class.is-valid]="artVenteForm.get('valeur')?.valid && artVenteForm.get('valeur')?.dirty"
+                        <input placeholder="entrer une valeur" style="width: 12em; border: 2px solid; margin-left: 3em;" type="text"
+                            class="form-control" id="valeur" formControlName="valeur"
+                            [class.is-valid]="artVenteForm.get('valeur')?.valid && artVenteForm.get('valeur')?.dirty"
                             [class.is-invalid]="artVenteForm.get('valeur')?.invalid && artVenteForm.get('valeur')?.dirty">
-                        <div class="text-danger" *ngIf="artVenteForm.get('valeur')?.dirty && !artVenteForm.get('valeur')?.valid">
-                            La valeur doit contenir uniquement des chiffres.
+                        <div class="invalid-feedback" *ngIf="artVenteForm.get('valeur')?.errors?.['monChampValidation'] aa">
+                            La valeur doit contenir uniquement des chiffres et est supérieure à 5.
                         </div>
                     </div>
                 </div>
@@ -91,9 +92,12 @@
                             </tr>
                         </tbody>
                     </table>
+                    <div *ngIf="articlesConfection.invalid && articlesConfection.errors?.['minLignes']" style="color: red;">
+                        Il doit y'avoir au moins 3 articles de confections.
+                    </div>
                 </div>
             </div>
-            <div class="col" style="margin-left: 6em; margin-top: 2em;">
+            <div class="col" style="margin-left: 4em; margin-top: 2em;">
                 <div class="col">
                     <label for="photo" style="cursor: pointer;">
                         <img [src]="img" style="max-width: 100%; height: 10rem; border: 2px solid #ccc; padding: 15px; margin-bottom: 3.5rem;" />

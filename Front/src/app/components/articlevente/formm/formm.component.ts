@@ -1,5 +1,5 @@
 import { Component, Output, EventEmitter, Input } from '@angular/core';
-import { FormBuilder, FormArray, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormArray, FormGroup, Validators, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
 import { ImagesService } from 'src/app/services/image-service/images.service';
 import { SharedBoolService } from 'src/app/services/other-fonctionnality-service/shared-bool.service';
 import { IdServiceService } from 'src/app/services/other-fonctionnality-service/id-service.service';
@@ -57,13 +57,8 @@ export class FormmComponent {
       libelle: ['', [Validators.required, Validators.pattern(/^[a-zA-Z][a-zA-Z0-9]*$/)]],
       categorie: [''],
       promo: [true],
-      valeur: [''],
-      articlesConfection: this.fb.array([
-        this.fb.group({
-          lib: ['', [Validators.required, Validators.pattern(/^[a-zA-Z][a-zA-Z0-9]*$/)]],
-          qte: ['', [Validators.required, Validators.pattern(/^[0-9]*$/)]]
-        })
-      ]),
+      valeur: ['', [Validators.pattern('[0-9]*'), this.monChampValidation]],      
+      articlesConfection: this.fb.array([], [this.validateArticlesConfection]),
       photo: [this.img],
       marge: ['', [Validators.required, Validators.pattern(/^[0-9]*$/), Validators.min(5000)]],
       prixVente: ['']
@@ -140,6 +135,24 @@ export class FormmComponent {
 
   }
 
+  monChampValidation(control: AbstractControl): ValidationErrors | null {
+    const valeur = control.value;
+    if (valeur && valeur <= 5) {
+      return { monChampValidation: true };
+    }
+    return null;
+  }
+
+  validateArticlesConfection(control: AbstractControl): ValidationErrors | null {
+    const articlesArray = control as FormArray;
+
+    if (articlesArray.length < 3) {
+      return { minLignes: true };
+    }
+
+    return null;
+  }
+
   updateRef(categorie: string, num: number) {
     this.ref += '-' + categorie.toUpperCase() + '-' + num;
   }
@@ -158,12 +171,11 @@ export class FormmComponent {
   }
 
   addArticleConfection() {
-    const newArticleConfection = this.fb.group({
-      lib: '',
-      qte: ''
+    const articleGroup = this.fb.group({
+      lib: ['', [Validators.required, Validators.pattern(/^[a-zA-Z][a-zA-Z0-9]*$/)]],
+      qte: ['', [Validators.required, Validators.pattern(/^[0-9]*$/)]]
     });
-
-    this.articlesConfection.push(newArticleConfection);
+    this.articlesConfection.push(articleGroup);
   }
 
   removeArticleConfection(index: number) {
@@ -231,13 +243,21 @@ export class FormmComponent {
     } else {
       this.ajouter();
     }
+
+    // if (this.articlesConfection.invalid) {
+    //   this.articlesConfection.markAllAsTouched();
+
+    //   if (this.articlesConfection.errors && this.articlesConfection.errors['minLignes']) {
+    //     console.log("Le FormArray doit avoir au moins 3 lignes.");
+    //   }
+    // } else {
+    //   console.log("Le FormArray est valide. Soumission en cours...");
+    // }
+
   }
 
   ajouter() {
-    // console.log(this.recupArtConf);
-    // const marge = this.artVenteForm.get('marge')?.value;
-    // console.log(this.cout + marge);
-
+    
     const article: ArticleVente = {
       id: null,
       libelle: this.artVenteForm.value.libelle,
@@ -250,8 +270,8 @@ export class FormmComponent {
       photo_name: this.img
     };
     // console.log(article);
-    //this.addArtVenteEvent.emit(article);
-    //this.artVenteForm.reset();
+    this.addArtVenteEvent.emit(article);
+    this.artVenteForm.reset();
   }
   
   editArticle() {    
@@ -268,8 +288,8 @@ export class FormmComponent {
       photo_name: this.img
     };
     // console.log(article);
-    //this.editArticleEvent.emit(article);
-    //this.artVenteForm.reset();
+    this.editArticleEvent.emit(article);
+    this.artVenteForm.reset();
     this.isEditing = false;
   }    
 
