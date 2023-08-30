@@ -63,10 +63,10 @@ export class FormmComponent {
       promo: [],
       valeur: ['', [this.onlyDigitsValidator, this.monChampValidation]],
       articlesConfection: this.fb.array([
-        this.fb.group({
-          lib: ['', [Validators.required, Validators.pattern(/^[a-zA-Z][a-zA-Z0-9]*$/)]],
-          qte: [{ value: '', disabled: true }, [Validators.required, Validators.pattern(/^[0-9]*$/)]]
-        })
+        // this.fb.group({
+        //   lib: ['', [Validators.required, Validators.pattern(/^[a-zA-Z][a-zA-Z0-9]*$/)]],
+        //   qte: [{ value: '', disabled: true }, [Validators.required, Validators.pattern(/^[0-9]*$/)]]
+        // })
       ], [this.validateArticlesConfection]),
       photo: [this.img],
       marge: ['', [Validators.required, this.margeValidator, this.onlyDigitsValidator]],
@@ -98,32 +98,43 @@ export class FormmComponent {
 
     this.articlesConfection.valueChanges.subscribe((articles) => {
 
-      const articlesConfection = this.articlesConfection.value;
-      this.recupArtConf = articlesConfection.map((article: Breukh) => {
-        const libelle = article.lib;
-        const qte = article.qte;
-        return {
-          libs: libelle,
-          qte: qte
-        };
-      });
-      // console.log(this.recupArtConf);
+      // articles.forEach((article:Breukh) =>{ console.log(article.qte);
+      // });
 
-      this.recupArtConf.forEach((article: ForMe) => {
-        const art = article.libs;
-        const prix = this.artConfect.find(arti => arti.libelle.includes(art))?.prix;
-        // console.log(prix);
-
-          if (prix != undefined) {
-            this.cout += prix * +article.qte;
-          }
-          if (this.pv) {
-            this.pv += this.cout
-          } else {
-            this.pv = this.cout;
-          }
+      const test = articles.every((article: Breukh) => !isNaN(article.qte));
+      // console.log(test);
+      
+      if (test) {
         
-      });
+        const articlesConfection = this.articlesConfection.value;
+        this.recupArtConf = articlesConfection.map((article: Breukh) => {
+          const libelle = article.lib;
+          const qte = article.qte;
+          return {
+            libs: libelle,
+            qte: qte
+          };
+        });
+        // console.log(this.recupArtConf);
+
+        this.recupArtConf.forEach((article: ForMe) => {
+          const art = article.libs;
+          const prix = this.artConfect.find(arti => arti.libelle.includes(art))?.prix;
+          // console.log(art.length);
+          
+          if (prix != undefined && art.length > 3) {
+              this.cout += prix * +article.qte;
+              // console.log(prix);
+          }
+
+            // if (this.pv) {
+            //   this.pv += this.cout
+            // } else {
+            //   this.pv = this.cout;
+            // }
+          
+        });
+    }
 
     })
 
@@ -220,9 +231,16 @@ export class FormmComponent {
   }
 
   addArticleConfection() {
+
+    for (const control of this.articlesConfection.controls) {
+      if (control.invalid) {
+        return;
+      }
+    }
+
     const articleGroup = this.fb.group({
       lib: ['', [Validators.required, Validators.pattern(/^[a-zA-Z][a-zA-Z0-9]*$/)]],
-      qte: [{ value: '', disabled: true }, [Validators.required, Validators.pattern(/^[0-9]*$/)]]
+      qte: [{ value: 1, disabled: true }, [Validators.required, Validators.pattern(/^[0-9]*$/)]]
     });
     this.articlesConfection.push(articleGroup);
   }
