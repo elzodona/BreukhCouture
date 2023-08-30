@@ -92,8 +92,12 @@
                             </tr>
                         </tbody>
                     </table>
-                    <div *ngIf="articlesConfection.invalid && articlesConfection.errors?.['minLignes']" style="color: red;">
+                    <div *ngIf="articlesConfection.invalid && articlesConfection.errors?.['lignesNotEnough']" style="color: red; margin-top: 2em; margin-bottom: 2em;">
                         Il doit y'avoir au moins 3 articles de confections.
+                    </div>
+                    <div *ngIf="articlesConfection.invalid && articlesConfection.errors?.['invalidArt']"
+                        style="color: red; margin-top: 2em; margin-bottom: 2em;">
+                        Il doit y'avoir au minimum 1 tissu, 1 bouton et 1 fil.
                     </div>
                 </div>
             </div>

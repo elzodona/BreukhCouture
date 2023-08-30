@@ -39,6 +39,7 @@ export class FormmComponent {
   recupArtConf: any;
   isEditing: boolean = false;
 
+  
   ngOnInit()
   {
     this.idService.getId().subscribe(id => {
@@ -146,8 +147,16 @@ export class FormmComponent {
   validateArticlesConfection(control: AbstractControl): ValidationErrors | null {
     const articlesArray = control as FormArray;
 
-    if (articlesArray.length < 3) {
-      return { minLignes: true };
+    if (articlesArray.controls.length < 3) {
+      return { lignesNotEnough: true };
+    }
+
+    const articles = articlesArray.controls.map((item: AbstractControl) => item.get('lib')?.value.toLowerCase());
+    const requiredValues = ['tis', 'bou', 'fil'];
+    const hasRequiredValues = requiredValues.every(value => articles.some(article => article.startsWith(value)));
+
+    if (!hasRequiredValues) {
+      return { invalidArt: true };
     }
 
     return null;
@@ -179,12 +188,10 @@ export class FormmComponent {
   }
 
   removeArticleConfection(index: number) {
-    if (index != 0) {
+    // if (index != 0) {
       this.articlesConfection.removeAt(index);
-    }
+    // }
   }
-
-  // ...
 
   getLibField(index: number) {
     return this.articlesConfection.at(index).get('lib');
@@ -245,8 +252,6 @@ export class FormmComponent {
     }
 
     // if (this.articlesConfection.invalid) {
-    //   this.articlesConfection.markAllAsTouched();
-
     //   if (this.articlesConfection.errors && this.articlesConfection.errors['minLignes']) {
     //     console.log("Le FormArray doit avoir au moins 3 lignes.");
     //   }
