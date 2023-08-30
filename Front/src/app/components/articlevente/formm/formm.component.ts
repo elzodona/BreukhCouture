@@ -216,6 +216,8 @@ export class FormmComponent {
 
   addArticleConfection() {
     const articleGroup = this.fb.group({
+      id: [],
+      categorie: [],
       lib: ['', [Validators.required, Validators.pattern(/^[a-zA-Z][a-zA-Z0-9]*$/)]],
       qte: ['', [Validators.required, Validators.pattern(/^[0-9]*$/)]]
     });
@@ -242,22 +244,36 @@ export class FormmComponent {
       const searchTerm = newValue.trim().toLowerCase();
 
       if (searchTerm.length >= 3) {
-        this.suggestions[i] = this.artConfect.filter(art =>
-          art.libelle.toLowerCase().includes(searchTerm)
-        );
+        this.suggestions[i] = this.artConfect
+          .filter(art => art.libelle.toLowerCase().startsWith(searchTerm))
+          .filter(art => !this.isSuggestionChosen(art.libelle, i));
       } else {
         this.suggestions[i] = [];
       }
     }
   }
 
-  insertSuggestion(i:number, suggestion: Article) {    
-    this.suggestions = [];
-
+  insertSuggestion(i: number, suggestion: Article) {
     const libelleControl = this.articlesConfection.at(i).get('lib');
     if (libelleControl) {
       libelleControl.setValue(suggestion.libelle);
     }
+
+    this.removeSuggestionFromList(suggestion.libelle);
+    this.suggestions[i] = [];
+
+  }
+
+  isSuggestionChosen(libelle: string, index: number): boolean {
+    const chosenLibelles = this.articlesConfection.controls
+      .map(control => control.get('lib')?.value)
+      .filter(value => !!value && value !== libelle);
+
+    return chosenLibelles.includes(libelle);
+  }
+
+  removeSuggestionFromList(libelle: string) {
+    this.artConfect = this.artConfect.filter(art => art.libelle !== libelle);
   }
 
   handleFileChange(event: Event): void {
