@@ -151,11 +151,13 @@ export class FormmComponent {
       return { lignesNotEnough: true };
     }
 
-    const articles = articlesArray.controls.map((item: AbstractControl) => item.get('lib')?.value.toLowerCase());
-    const requiredValues = ['tis', 'bou', 'fil'];
-    const hasRequiredValues = requiredValues.every(value => articles.some(article => article.startsWith(value)));
+    const libelle = articlesArray.controls.map((item: AbstractControl) => item.get('lib')?.value.slice(0, 3));
+    const libsRequis = ['tis', 'bou', 'fil'];
 
-    if (!hasRequiredValues) {
+    const validateNow = libelle.filter(element => !libsRequis.includes(element));
+    
+    if (validateNow.length > 0) 
+    {
       return { invalidArt: true };
     }
 
