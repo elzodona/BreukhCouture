@@ -100,7 +100,6 @@ export class FormmComponent {
     });
 
     this.articlesConfection.valueChanges.subscribe((articles) => {
-      this.cout = 0;
 
       const articlesConfection = this.articlesConfection.value;
       this.recupArtConf = articlesConfection.map((article: Breukh) => {
@@ -118,17 +117,24 @@ export class FormmComponent {
         const prix = this.artConfect.find(arti => arti.libelle.includes(art))?.prix;
         // console.log(prix);
 
-        if (prix != undefined) {
-          this.cout += prix * +article.qte;
-        }
-
+          if (prix != undefined) {
+            this.cout += prix * +article.qte;
+          }
+          if (this.pv) {
+            this.pv += this.cout
+          } else {
+            this.pv = this.cout;
+          }
+        
       });
 
     })
 
     this.artVenteForm.get('marge')!.valueChanges.subscribe((marge) => {
-      this.mrg = +marge;
-      this.pv = this.cout + this.mrg;
+      // if (this.cout) {
+        // this.mrg = +marge;
+        this.pv = +this.cout + +marge;
+      // }
 
     })
 
@@ -229,7 +235,9 @@ export class FormmComponent {
 
   ajouter() {
     // console.log(this.recupArtConf);
-    
+    // const marge = this.artVenteForm.get('marge')?.value;
+    // console.log(this.cout + marge);
+
     const article: ArticleVente = {
       id: null,
       libelle: this.artVenteForm.value.libelle,
@@ -242,11 +250,12 @@ export class FormmComponent {
       photo_name: this.img
     };
     // console.log(article);
-    this.addArtVenteEvent.emit(article);
-    this.artVenteForm.reset();
+    //this.addArtVenteEvent.emit(article);
+    //this.artVenteForm.reset();
   }
-      
-  editArticle() {
+  
+  editArticle() {    
+
     const article: ArticleVente = {
       id: this.id,
       libelle: this.artVenteForm.value.libelle,
@@ -259,8 +268,8 @@ export class FormmComponent {
       photo_name: this.img
     };
     // console.log(article);
-    this.editArticleEvent.emit(article);
-    this.artVenteForm.reset();
+    //this.editArticleEvent.emit(article);
+    //this.artVenteForm.reset();
     this.isEditing = false;
   }    
 

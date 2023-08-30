@@ -50,6 +50,7 @@ class ArticleVente extends Model
         });
 
         static::updated(function (ArticleVente $article) {
+            $article->article()->detach();
             $artConf = request()->articlesConfection;
             $articlesVente = [];
             
@@ -67,7 +68,7 @@ class ArticleVente extends Model
                 ];
                 $articlesVente [] = $articleVente;
             }
-            $article->article()->sync($articlesVente);
+            $article->article()->attach($articlesVente);
         });
 
         static::deleted(function (ArticleVente $article) {
